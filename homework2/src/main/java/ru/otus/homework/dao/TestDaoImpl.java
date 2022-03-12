@@ -1,6 +1,7 @@
 package ru.otus.homework.dao;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import ru.otus.homework.domain.Answer;
 import ru.otus.homework.domain.Question;
 
@@ -11,6 +12,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class TestDaoImpl implements TestDao {
     private static final String COMMA_SEPARATOR = ",";
     private static final String SEMICOLON_SEPARATOR = ";";
@@ -18,29 +20,8 @@ public class TestDaoImpl implements TestDao {
     private final List<Question> questions = new ArrayList<>();
     private final String fileName;
 
-    public TestDaoImpl(String fileName) {
+    public TestDaoImpl(@Value("${questions_file_name}") String fileName) {
         this.fileName = fileName;
-        load();
-    }
-
-    public List<String> readFromFile(String fileName) {
-        List<String> lines = new ArrayList<>();
-        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
-
-        try (InputStream inputStream = classLoader.getResourceAsStream(fileName)) {
-            if (inputStream == null)
-                return null;
-
-            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-            BufferedReader reader = new BufferedReader(inputStreamReader);
-            for (String line = reader.readLine(); line != null; line = reader.readLine()) {
-                lines.add(line);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return lines;
     }
 
     @Override
@@ -72,5 +53,25 @@ public class TestDaoImpl implements TestDao {
     @Override
     public List<Question> getQuestions() {
         return questions;
+    }
+
+    private List<String> readFromFile(String fileName) {
+        List<String> lines = new ArrayList<>();
+        ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+
+        try (InputStream inputStream = classLoader.getResourceAsStream(fileName)) {
+            if (inputStream == null)
+                return null;
+
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+            BufferedReader reader = new BufferedReader(inputStreamReader);
+            for (String line = reader.readLine(); line != null; line = reader.readLine()) {
+                lines.add(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return lines;
     }
 }
