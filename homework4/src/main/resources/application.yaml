@@ -1,0 +1,19 @@
+questions:
+  filename: "questions.csv"
+
+result:
+  passing_score: 3
+
+locale:
+  code: "ru-RU"
+  #code: "en-US"
+
+
+
+spring:
+  main:
+    allow-circular-references: true
+  messages:
+    basename: i18n/messages
+    encoding: "UTF-8"
+    fallback-to-system-locale: false
