@@ -1,0 +1,6 @@
+Код вопроса;Текст вопроса;Коды ответов;Тексты ответов;Код правильного ответа
+Q1;How many legs does an elephant have ?;A,B,C,D;1,2,3,4;D
+Q2;Which is the most popular Framework in Java?;A,B,C;Spring Boot,Hibernate,Lombok;A
+Q3;Which programming language are you currently studying?;A,B,C,D;C#,JavaScript,Java,T-SQL;C
+Q4;1+1=?;A,B,C,D;2,10,11,"11";A
+Q5;What is my last name?;A,B,C,D;Denisov,Not Denisov,Petrov,Ivanov;A
