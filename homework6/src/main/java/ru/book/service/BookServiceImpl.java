@@ -36,6 +36,12 @@ public class BookServiceImpl implements BookService {
     }
 
     @Override
+    @Transactional(readOnly = false)
+    public Book getBook(int id) {
+        return bookDao.get(id);
+    }
+
+    @Override
     @Transactional
     public void insertBook(Book book) {
         bookDao.insert(book);

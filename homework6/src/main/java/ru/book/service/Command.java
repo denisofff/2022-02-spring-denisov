@@ -6,8 +6,10 @@ import org.springframework.shell.standard.ShellMethod;
 import org.springframework.shell.standard.ShellOption;
 import ru.book.domain.Author;
 import ru.book.domain.Book;
+import ru.book.domain.BookComment;
 import ru.book.domain.Genre;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @ShellComponent
@@ -16,6 +18,7 @@ public class Command {
     private final BookService bookService;
     private final AuthorService authorService;
     private final GenreService genreService;
+    private final BookCommentService bookCommentService;
 
     //===============================================================
     // Справочник авторов
@@ -115,27 +118,58 @@ public class Command {
     }
 
     //===============================================================
+    // Комментарии
+    //===============================================================
+
+    @ShellMethod(value = "Добавить комментарий к книге", key = {"ic"})
+    public void bookCommentInsert(@ShellOption int bookId, @ShellOption String date, @ShellOption String comment) {
+        bookCommentService.insertBookComment(new BookComment(null, bookService.getBook(bookId), LocalDate.parse(date), comment));
+    }
+
+    @ShellMethod(value = "Редактировать комментарий к книге", key = {"uc"})
+    public void bookCommentUpdate(@ShellOption int id, @ShellOption String date, @ShellOption String comment) {
+        bookCommentService.updateBookComment(new BookComment(id, bookCommentService.getBookComment(id).getBook(), LocalDate.parse(date), comment));
+    }
+
+    @ShellMethod(value = "Удалить комментарий к книге", key = {"dc"})
+    public void bookCommentDelete(int id) {
+        bookCommentService.deleteBookComment(id);
+    }
+
+    @ShellMethod(value = "Просмотр комментариев к книге", key = {"pc"})
+    public void bookCommentsPrint(@ShellOption int bookId) {
+        booksCommentsPrintInternal(bookCommentService.findByBook(bookService.getBook(bookId)));
+    }
+
+    //===============================================================
     // Internal-методы
     //===============================================================
 
     private void authorsPrintInternal(List<Author> authors) {
         System.out.println("Список авторов:");
-        for (var author: authors) {
+        for (var author : authors) {
             System.out.println(author);
         }
     }
 
     private void genresPrintInternal(List<Genre> genres) {
         System.out.println("Список жанров:");
-        for (var genre: genres) {
+        for (var genre : genres) {
             System.out.println(genre);
         }
     }
 
     private void booksPrintInternal(List<Book> books) {
         System.out.println("Список книг:");
-        for (var book: books) {
+        for (var book : books) {
             System.out.println(book);
+        }
+    }
+
+    private void booksCommentsPrintInternal(List<BookComment> booksComments) {
+        System.out.println("Список комментариев:");
+        for (var bookComment : booksComments) {
+            System.out.println(bookComment);
         }
     }
 }

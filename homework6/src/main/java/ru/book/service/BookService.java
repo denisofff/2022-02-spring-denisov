@@ -9,6 +9,8 @@ public interface BookService {
     List<Book> findBooksByGenre(String name);
     List<Book> findBooksByAuthor(String name);
 
+    Book getBook(int id);
+
     void insertBook(Book book);
     void insertBook(String name, String genresIds, String authorsIds);
 

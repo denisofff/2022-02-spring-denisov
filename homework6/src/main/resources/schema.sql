@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS BooksComments;
 DROP TABLE IF EXISTS BooksGenres;
 DROP TABLE IF EXISTS BooksAuthors;
 DROP TABLE IF EXISTS Books;
@@ -41,4 +42,14 @@ CREATE TABLE BooksGenres
     PRIMARY KEY (Book_Id, Genre_Id),
     FOREIGN KEY (Book_Id) REFERENCES Books(Id) ON DELETE CASCADE,
     FOREIGN KEY (Genre_Id) REFERENCES Genres(Id)
+);
+
+CREATE TABLE BooksComments
+(
+    Id          Int            auto_increment           NOT NULL,
+    Book_Id     Int                                     NOT NULL,
+    CreateDate  Date                                    NOT NULL,
+    Note        Text                                    NOT NULL,
+    PRIMARY KEY (Id),
+    FOREIGN KEY (Book_Id) REFERENCES Books(Id) ON DELETE CASCADE
 );
