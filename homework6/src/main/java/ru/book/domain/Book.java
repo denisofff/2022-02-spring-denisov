@@ -1,8 +1,8 @@
 package ru.book.domain;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.ToString;
+import lombok.experimental.Accessors;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
@@ -11,8 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Accessors(chain = true)
 @Entity
 @Table(name = "Books")
 public class Book {
@@ -41,4 +40,9 @@ public class Book {
     )
     @Fetch(FetchMode.SUBSELECT)
     private List<Author> authors = new ArrayList<>();
+
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "book")
+    @Fetch(FetchMode.SUBSELECT)
+    @ToString.Exclude
+    private List<BookComment> comments = new ArrayList<>();
 }

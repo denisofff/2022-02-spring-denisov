@@ -2,7 +2,9 @@ package ru.book.repository;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
+import ru.book.domain.Author;
 import ru.book.domain.Book;
+import ru.book.domain.Genre;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -51,16 +53,14 @@ public class BookRepositoryJpa implements BookRepository {
     }
 
     @Override
-    public List<Book> selectByGenre(String name) {
-        TypedQuery<Book> query = entityManager.createQuery("select b from Book b join b.genres g where lower(g.name) like :name", Book.class);
-        query.setParameter("name", "%" + name.toLowerCase() + "%");
-        return query.getResultList();
+    public List<Book> selectByGenre(Genre genre) {
+        return genre.getBooks();
     }
 
     @Override
-    public List<Book> selectByAuthor(String name) {
+    public List<Book> selectByAuthor(Author author) {
         TypedQuery<Book> query = entityManager.createQuery("select b from Book b join b.authors a where lower(a.name) like :name", Book.class);
-        query.setParameter("name", "%" + name.toLowerCase() + "%");
+        query.setParameter("name", "%" + author.getName().toLowerCase() + "%");
         return query.getResultList();
     }
 }

@@ -45,9 +45,9 @@ public class GenreRepositoryJpa implements GenreRepository {
     }
 
     @Override
-    public List<Genre> selectByIds(String ids) {
+    public List<Genre> selectByIds(List<Integer> ids) {
         TypedQuery<Genre> query = entityManager.createQuery("select a from Genre a where a.id IN :ids", Genre.class);
-        query.setParameter("ids", Arrays.stream(ids.split(",")).map(Integer::parseInt).toList());
+        query.setParameter("ids", ids);
         return query.getResultList();
     }
 

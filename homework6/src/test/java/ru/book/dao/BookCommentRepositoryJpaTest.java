@@ -36,9 +36,12 @@ class BookCommentRepositoryJpaTest {
     @DisplayName("Добавление комментария и проверка того, что он появился")
     @Test
     void shouldInsertBookComment() {
-        bookCommentDao.insert(new BookComment(null, bookDao.get(EXISTING_BOOK_ID), LocalDate.now(), COMMENT_TEXT));
+        var book = bookDao.get(EXISTING_BOOK_ID);
+        bookCommentDao.insert(book, LocalDate.now(), COMMENT_TEXT);
 
-        var comments = bookCommentDao.selectByBook(bookDao.get(EXISTING_BOOK_ID));
+        entityManager.detach(book);
+
+        var comments = book.getComments();
         assertThat(comments.size()).isEqualTo(1);
         assertThat(comments.get(0).getNote()).isEqualTo(COMMENT_TEXT);
     }
@@ -46,18 +49,17 @@ class BookCommentRepositoryJpaTest {
     @DisplayName("Изменение комментария")
     @Test
     void shouldUpdateBookComment() {
-        bookCommentDao.insert(new BookComment(null, bookDao.get(EXISTING_BOOK_ID), LocalDate.now(), COMMENT_TEXT));
+        bookCommentDao.insert(bookDao.get(EXISTING_BOOK_ID), LocalDate.now(), COMMENT_TEXT);
 
-        var comments = bookCommentDao.selectByBook(bookDao.get(EXISTING_BOOK_ID));
+        var comments = bookDao.get(EXISTING_BOOK_ID).getComments();
 
         assertThat(comments.size()).isEqualTo(1);
         assertThat(comments.get(0).getNote()).isEqualTo(COMMENT_TEXT);
 
         var comment = comments.get(0);
-        comment.setNote(MODIFIED_COMMENT_TEXT);
-        bookCommentDao.update(comment);
+        bookCommentDao.update(comment.getId(), bookDao.get(EXISTING_BOOK_ID), comment.getDate(), MODIFIED_COMMENT_TEXT);
 
-        comments = bookCommentDao.selectByBook(bookDao.get(EXISTING_BOOK_ID));
+        comments = bookDao.get(EXISTING_BOOK_ID).getComments();
 
         assertThat(comments.size()).isEqualTo(1);
         assertThat(comments.get(0).getNote()).isEqualTo(MODIFIED_COMMENT_TEXT);
@@ -66,9 +68,9 @@ class BookCommentRepositoryJpaTest {
     @DisplayName("Возвращать комментарий по id")
     @Test
     void shouldReturnExpectedBookCommentById() {
-        bookCommentDao.insert(new BookComment(null, bookDao.get(EXISTING_BOOK_ID), LocalDate.now(), COMMENT_TEXT));
+        bookCommentDao.insert(bookDao.get(EXISTING_BOOK_ID), LocalDate.now(), COMMENT_TEXT);
 
-        var comments = bookCommentDao.selectByBook(bookDao.get(EXISTING_BOOK_ID));
+        var comments = bookDao.get(EXISTING_BOOK_ID).getComments();
 
         assertThat(comments.size()).isEqualTo(1);
         assertThat(comments.get(0).getNote()).isEqualTo(COMMENT_TEXT);
@@ -82,18 +84,19 @@ class BookCommentRepositoryJpaTest {
     @DisplayName("Удаление комментария по id")
     @Test
     void shouldCorrectDeleteBookCommentById() {
-        bookCommentDao.insert(new BookComment(null, bookDao.get(EXISTING_BOOK_ID), LocalDate.now(), COMMENT_TEXT));
+        bookCommentDao.insert(bookDao.get(EXISTING_BOOK_ID), LocalDate.now(), COMMENT_TEXT);
 
-        var comments = bookCommentDao.selectByBook(bookDao.get(EXISTING_BOOK_ID));
+        var comments = bookDao.get(EXISTING_BOOK_ID).getComments();
 
         assertThat(comments.size()).isEqualTo(1);
         assertThat(comments.get(0).getNote()).isEqualTo(COMMENT_TEXT);
 
         var comment = comments.get(0);
 
+
         bookCommentDao.delete(comment.getId());
 
-        comments = bookCommentDao.selectByBook(bookDao.get(EXISTING_BOOK_ID));
+        comments = bookDao.get(EXISTING_BOOK_ID).getComments();
         assertThat(comments.size()).isEqualTo(0);
     }
 }

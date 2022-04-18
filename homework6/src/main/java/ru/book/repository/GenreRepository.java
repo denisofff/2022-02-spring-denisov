@@ -12,6 +12,6 @@ public interface GenreRepository {
     Genre get(int id);
 
     List<Genre> selectAll();
-    List<Genre> selectByIds(String ids);
+    List<Genre> selectByIds(List<Integer> ids);
     List<Genre> selectByName(String name);
 }

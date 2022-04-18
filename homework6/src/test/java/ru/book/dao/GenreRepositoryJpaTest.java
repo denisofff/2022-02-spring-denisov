@@ -30,7 +30,7 @@ class GenreRepositoryJpaTest {
     @DisplayName("Добавление жанра и проверка поиска по имени")
     @Test
     void shouldInsertGenre() {
-        Genre expectedGenre = new Genre(null, GENRE_NAME);
+        Genre expectedGenre = new Genre().setName(GENRE_NAME);
         var notExistGenre = genreDao.selectByName(GENRE_NAME);
         assertThat(notExistGenre.size()).isEqualTo(0);
         genreDao.insert(expectedGenre);
@@ -43,7 +43,7 @@ class GenreRepositoryJpaTest {
     void shouldUpdateGenre() {
         var existingGenre = genreDao.get(EXISTING_GENRE_ID);
         assertThat(existingGenre.getName()).isEqualTo(EXISTING_GENRE_NAME);
-        genreDao.update(new Genre(EXISTING_GENRE_ID, GENRE_NAME));
+        genreDao.update(new Genre().setId(EXISTING_GENRE_ID).setName(GENRE_NAME));
         var updatedGenre = genreDao.get(EXISTING_GENRE_ID);
         assertThat(updatedGenre.getName()).isEqualTo(GENRE_NAME);
     }
@@ -69,7 +69,7 @@ class GenreRepositoryJpaTest {
     @DisplayName("Проверка ожидаемого списка жанров")
     @Test
     void shouldReturnExpectedGenresList() {
-        Genre expectedGenre = new Genre(EXISTING_GENRE_ID, EXISTING_GENRE_NAME);
+        Genre expectedGenre = new Genre().setId(EXISTING_GENRE_ID).setName(EXISTING_GENRE_NAME);
         List<Genre> actualGenreList = genreDao.selectAll();
         assertThat(actualGenreList).contains(expectedGenre);
     }

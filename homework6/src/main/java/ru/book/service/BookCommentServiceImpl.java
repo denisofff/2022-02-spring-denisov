@@ -9,6 +9,7 @@ import ru.book.domain.BookComment;
 import ru.book.repository.AuthorRepository;
 import ru.book.repository.BookCommentRepository;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -19,7 +20,7 @@ public class BookCommentServiceImpl implements BookCommentService {
     @Override
     @Transactional(readOnly = true)
     public List<BookComment> findByBook(Book book) {
-        return bookCommentDao.selectByBook(book);
+        return book.getComments();
     }
 
     @Override
@@ -30,14 +31,16 @@ public class BookCommentServiceImpl implements BookCommentService {
 
     @Override
     @Transactional
-    public void insertBookComment(BookComment bookComment) {
-        bookCommentDao.insert(bookComment);
+    public void insertBookComment(Book book, LocalDate date, String note) {
+        bookCommentDao.insert(book, date, note);
     }
 
     @Override
     @Transactional
-    public void updateBookComment(BookComment bookComment) {
-        bookCommentDao.update(bookComment);
+    public void updateBookComment(int id, Book book, LocalDate date, String note) {
+        //bookCommentDao.update(id, book, date, note);
+        var comment = bookCommentDao.get(id);
+        comment.setNote(note).setDate(date).setBook(book);
     }
 
     @Override

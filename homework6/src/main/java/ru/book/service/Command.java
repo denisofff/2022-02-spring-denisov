@@ -10,6 +10,7 @@ import ru.book.domain.BookComment;
 import ru.book.domain.Genre;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @ShellComponent
@@ -26,12 +27,12 @@ public class Command {
 
     @ShellMethod(value = "Добавить автора", key = {"ia"})
     public void authorInsert(@ShellOption String name) {
-        authorService.insertAuthor(new Author(null, name));
+        authorService.insertAuthor(new Author().setName(name));
     }
 
     @ShellMethod(value = "Редактировать автора", key = {"ua"})
     public void authorUpdate(@ShellOption int id, @ShellOption String name) {
-        authorService.updateAuthor(new Author(id, name));
+        authorService.updateAuthor(new Author().setId(id).setName(name));
     }
 
     @ShellMethod(value = "Удалить автора", key = {"da"})
@@ -55,12 +56,12 @@ public class Command {
 
     @ShellMethod(value = "Добавить жанр", key = {"ig"})
     public void genreInsert(@ShellOption String name) {
-        genreService.insertGenre(new Genre(null, name));
+        genreService.insertGenre(new Genre().setName(name));
     }
 
     @ShellMethod(value = "Редактировать жанр", key = {"ug"})
     public void genreUpdate(@ShellOption int id, @ShellOption String name) {
-        genreService.updateGenre(new Genre(id, name));
+        genreService.updateGenre(new Genre().setId(id).setName(name));
     }
 
     @ShellMethod(value = "Удалить жанр", key = {"dg"})
@@ -104,7 +105,12 @@ public class Command {
 
     @ShellMethod(value = "Поиск книги по жанру", key = {"sbg"})
     public void bookSelectByGenre(@ShellOption String name) {
-        booksPrintInternal(bookService.findBooksByGenre(name));
+        var genres = genreService.findGenres(name);
+        var books = new ArrayList<Book>();
+        for (var genre : genres) {
+            books.addAll(bookService.findBooksByGenre(genre));
+        }
+        booksPrintInternal(books);
     }
 
     @ShellMethod(value = "Поиск книги по автору", key = {"sba"})
@@ -123,12 +129,12 @@ public class Command {
 
     @ShellMethod(value = "Добавить комментарий к книге", key = {"ic"})
     public void bookCommentInsert(@ShellOption int bookId, @ShellOption String date, @ShellOption String comment) {
-        bookCommentService.insertBookComment(new BookComment(null, bookService.getBook(bookId), LocalDate.parse(date), comment));
+        bookCommentService.insertBookComment(bookService.getBook(bookId), LocalDate.parse(date), comment);
     }
 
     @ShellMethod(value = "Редактировать комментарий к книге", key = {"uc"})
-    public void bookCommentUpdate(@ShellOption int id, @ShellOption String date, @ShellOption String comment) {
-        bookCommentService.updateBookComment(new BookComment(id, bookCommentService.getBookComment(id).getBook(), LocalDate.parse(date), comment));
+    public void bookCommentUpdate(@ShellOption int bookId, @ShellOption int id, @ShellOption String date, @ShellOption String comment) {
+        bookCommentService.updateBookComment(id, bookService.getBook(bookId), LocalDate.parse(date), comment);
     }
 
     @ShellMethod(value = "Удалить комментарий к книге", key = {"dc"})

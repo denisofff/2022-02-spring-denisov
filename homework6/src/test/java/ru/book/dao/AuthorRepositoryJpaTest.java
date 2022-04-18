@@ -30,7 +30,7 @@ class AuthorRepositoryJpaTest {
     @DisplayName("Добавление автора и проверка поиска по имени")
     @Test
     void shouldInsertAuthor() {
-        Author expectedAuthor = new Author(null, AUTHOR_NAME);
+        Author expectedAuthor = new Author().setName(AUTHOR_NAME);
         var notExistAuthor = authorDao.selectByName(AUTHOR_NAME);
         assertThat(notExistAuthor.size()).isEqualTo(0);
         authorDao.insert(expectedAuthor);
@@ -43,7 +43,7 @@ class AuthorRepositoryJpaTest {
     void shouldUpdateAuthor() {
         var existingAuthor = authorDao.get(EXISTING_AUTHOR_ID);
         assertThat(existingAuthor.getName()).isEqualTo(EXISTING_AUTHOR_NAME);
-        authorDao.update(new Author(EXISTING_AUTHOR_ID, AUTHOR_NAME));
+        authorDao.update(new Author().setId(EXISTING_AUTHOR_ID).setName(AUTHOR_NAME));
         var updatedAuthor = authorDao.get(EXISTING_AUTHOR_ID);
         assertThat(updatedAuthor.getName()).isEqualTo(AUTHOR_NAME);
     }
@@ -69,7 +69,7 @@ class AuthorRepositoryJpaTest {
     @DisplayName("Проверка ожидаемого списка авторов")
     @Test
     void shouldReturnExpectedAuthorsList() {
-        Author expectedAuthor = new Author(EXISTING_AUTHOR_ID, EXISTING_AUTHOR_NAME);
+        Author expectedAuthor = new Author().setId(EXISTING_AUTHOR_ID).setName(EXISTING_AUTHOR_NAME);
         List<Author> actualAuthorList = authorDao.selectAll();
         assertThat(actualAuthorList).contains(expectedAuthor);
     }

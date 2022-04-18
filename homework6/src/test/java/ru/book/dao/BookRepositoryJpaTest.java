@@ -43,7 +43,10 @@ class BookRepositoryJpaTest {
     @DisplayName("Добавление книги и проверка поиска по имени")
     @Test
     void shouldInsertBook() {
-        Book expectedBook = new Book(null, BOOK_NAME, List.of(genreDao.get(EXISTING_GENRE_ID)), List.of(authorDao.get(EXISTING_AUTHOR_ID)));
+        Book expectedBook = new Book()
+                .setName(BOOK_NAME)
+                .setGenres(List.of(genreDao.get(EXISTING_GENRE_ID)))
+                .setAuthors(List.of(authorDao.get(EXISTING_AUTHOR_ID)));
         var notExistBook = bookDao.selectByName(BOOK_NAME);
         assertThat(notExistBook.size()).isEqualTo(0);
         bookDao.insert(expectedBook);
@@ -56,7 +59,8 @@ class BookRepositoryJpaTest {
     void shouldUpdateBook() {
         var existingBook = bookDao.get(EXISTING_BOOK_ID);
         assertThat(existingBook.getName()).isEqualTo(EXISTING_BOOK_NAME);
-        bookDao.update(new Book(EXISTING_BOOK_ID, BOOK_NAME, List.of(genreDao.get(EXISTING_GENRE_ID)), List.of(authorDao.get(EXISTING_AUTHOR_ID))));
+        existingBook.setName(BOOK_NAME);
+        bookDao.update(existingBook);
         var updatedBook = bookDao.get(EXISTING_BOOK_ID);
         assertThat(updatedBook.getName()).isEqualTo(BOOK_NAME);
     }
@@ -82,7 +86,12 @@ class BookRepositoryJpaTest {
     @DisplayName("Проверка ожидаемого списка книг")
     @Test
     void shouldReturnExpectedBooksList() {
-        Book expectedBook = new Book(EXISTING_BOOK_ID, EXISTING_BOOK_NAME, List.of(genreDao.get(EXISTING_GENRE_ID)), List.of(authorDao.get(EXISTING_AUTHOR_ID)));
+        Book expectedBook = new Book()
+                .setId(EXISTING_BOOK_ID)
+                .setName(EXISTING_BOOK_NAME)
+                .setGenres(List.of(genreDao.get(EXISTING_GENRE_ID)))
+                .setAuthors(List.of(authorDao.get(EXISTING_AUTHOR_ID))
+                );
         List<Book> actualBookList = bookDao.selectAll();
         assertThat(actualBookList).containsAnyOf(expectedBook);
     }
@@ -90,16 +99,26 @@ class BookRepositoryJpaTest {
     @DisplayName("Проверка поиска по автору")
     @Test
     void shouldReturnExpectedBooksListByAuthor() {
-        Book expectedBook = new Book(EXISTING_BOOK_ID, EXISTING_BOOK_NAME, List.of(genreDao.get(EXISTING_GENRE_ID)), List.of(authorDao.get(EXISTING_AUTHOR_ID)));
-        List<Book> actualBookList = bookDao.selectByAuthor(EXISTING_AUTHOR_NAME);
+        Book expectedBook = new Book()
+                .setId(EXISTING_BOOK_ID)
+                .setName(EXISTING_BOOK_NAME)
+                .setGenres(List.of(genreDao.get(EXISTING_GENRE_ID)))
+                .setAuthors(List.of(authorDao.get(EXISTING_AUTHOR_ID))
+                );
+        List<Book> actualBookList = bookDao.selectByAuthor(authorDao.get(EXISTING_AUTHOR_ID));
         assertThat(actualBookList).containsAnyOf(expectedBook);
     }
 
     @DisplayName("Проверка поиска по жанру")
     @Test
     void shouldReturnExpectedBooksListByGenre() {
-        Book expectedBook = new Book(EXISTING_BOOK_ID, EXISTING_BOOK_NAME, List.of(genreDao.get(EXISTING_GENRE_ID)), List.of(authorDao.get(EXISTING_AUTHOR_ID)));
-        List<Book> actualBookList = bookDao.selectByGenre(EXISTING_GENRE_NAME);
+        Book expectedBook = new Book()
+                .setId(EXISTING_BOOK_ID)
+                .setName(EXISTING_BOOK_NAME)
+                .setGenres(List.of(genreDao.get(EXISTING_GENRE_ID)))
+                .setAuthors(List.of(authorDao.get(EXISTING_AUTHOR_ID))
+                );
+        List<Book> actualBookList = bookDao.selectByGenre(genreDao.get(EXISTING_GENRE_ID));
         assertThat(actualBookList).containsAnyOf(expectedBook);
     }
 }

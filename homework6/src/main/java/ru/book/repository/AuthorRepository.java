@@ -11,6 +11,6 @@ public interface AuthorRepository {
 
     Author get(int id);
     List<Author> selectAll();
-    List<Author> selectByIds(String ids);
+    List<Author> selectByIds(List<Integer> ids);
     List<Author> selectByName(String name);
 }

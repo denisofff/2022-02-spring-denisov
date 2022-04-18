@@ -1,7 +1,7 @@
 package ru.book.repository;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Component;
 import ru.book.domain.Author;
 
 import javax.persistence.EntityManager;
@@ -11,7 +11,7 @@ import javax.persistence.TypedQuery;
 import java.util.Arrays;
 import java.util.List;
 
-@Repository
+@Component
 @RequiredArgsConstructor
 public class AuthorRepositoryJpa implements AuthorRepository {
     @PersistenceContext
@@ -29,9 +29,7 @@ public class AuthorRepositoryJpa implements AuthorRepository {
 
     @Override
     public void delete(int id) {
-        Query query = entityManager.createQuery("delete from Author a where a.id = :id");
-        query.setParameter("id", id);
-        query.executeUpdate();
+        entityManager.remove(get(id));
     }
 
     @Override
@@ -45,9 +43,9 @@ public class AuthorRepositoryJpa implements AuthorRepository {
     }
 
     @Override
-    public List<Author> selectByIds(String ids) {
+    public List<Author> selectByIds(List<Integer> ids) {
         TypedQuery<Author> query = entityManager.createQuery("select a from Author a where a.id IN :ids", Author.class);
-        query.setParameter("ids", Arrays.stream(ids.split(",")).map(Integer::parseInt).toList());
+        query.setParameter("ids", ids);
         return query.getResultList();
     }
 

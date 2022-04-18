@@ -3,11 +3,15 @@ package ru.book.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.book.domain.Author;
 import ru.book.domain.Book;
+import ru.book.domain.Genre;
 import ru.book.repository.AuthorRepository;
 import ru.book.repository.BookRepository;
 import ru.book.repository.GenreRepository;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -25,18 +29,23 @@ public class BookServiceImpl implements BookService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<Book> findBooksByGenre(String name) {
-        return bookDao.selectByGenre(name);
+    public List<Book> findBooksByGenre(Genre genre) {
+        return genre.getBooks();
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<Book> findBooksByAuthor(String name) {
-        return bookDao.selectByAuthor(name);
+        var authors = authorDao.selectByName(name);
+        var result = new ArrayList<Book>();
+        for (var author : authors) {
+            result.addAll(bookDao.selectByAuthor(author));
+        }
+        return result;
     }
 
     @Override
-    @Transactional(readOnly = false)
+    @Transactional(readOnly = true)
     public Book getBook(int id) {
         return bookDao.get(id);
     }
@@ -50,7 +59,12 @@ public class BookServiceImpl implements BookService {
     @Override
     @Transactional
     public void insertBook(String name, String genresIds, String authorsIds) {
-        bookDao.insert(new Book(null, name, genreDao.selectByIds(genresIds), authorDao.selectByIds(authorsIds)));
+        bookDao.insert(
+                new Book()
+                        .setName(name)
+                        .setGenres(genreDao.selectByIds(Arrays.stream(genresIds.split(",")).map(Integer::parseInt).toList()))
+                        .setAuthors(authorDao.selectByIds(Arrays.stream(authorsIds.split(",")).map(Integer::parseInt).toList()))
+        );
     }
 
     @Override
@@ -62,7 +76,12 @@ public class BookServiceImpl implements BookService {
     @Override
     @Transactional
     public void updateBook(int id, String name, String genresIds, String authorsIds) {
-        bookDao.update(new Book(id, name, genreDao.selectByIds(genresIds), authorDao.selectByIds(authorsIds)));
+        bookDao.update(
+                bookDao.get(id)
+                        .setName(name)
+                        .setGenres(genreDao.selectByIds(Arrays.stream(genresIds.split(",")).map(Integer::parseInt).toList()))
+                        .setAuthors(authorDao.selectByIds(Arrays.stream(authorsIds.split(",")).map(Integer::parseInt).toList()))
+        );
     }
 
     @Override
