@@ -19,25 +19,21 @@ public class BookServiceImpl implements BookService {
     private final BookRepository bookDao;
 
     @Override
-    @Transactional(readOnly = true)
     public List<Book> findBooksByName(String name) {
         return name == null ? bookDao.findAll() : bookDao.findByNameContainsIgnoreCase(name);
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<Book> findBooksByGenre(String name) {
         return bookDao.findByGenre(name);
     }
 
     @Override
-    @Transactional(readOnly = true)
     public List<Book> findBooksByAuthor(String name) {
         return bookDao.findByAuthor(name);
     }
 
     @Override
-    @Transactional(readOnly = true)
     public Book getBook(int id) {
         return bookDao.findById(id).orElseThrow();
     }

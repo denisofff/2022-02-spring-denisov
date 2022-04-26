@@ -11,7 +11,6 @@ public interface BookRepository extends JpaRepository<Book, Integer> {
     List<Book> findByNameContainsIgnoreCase(String name);
 
     @Query(value = "select b from Book b join b.genres g where lower(g.name) like concat(concat('%', lower(:name)), '%')")
-
     List<Book> findByGenre(@Param("name") String name);
 
     @Query(value = "select b from Book b join b.authors a where lower(a.name) like concat(concat('%', lower(:name)), '%')")
